@@ -1,4 +1,7 @@
 import typer
+from scrapybara import Scrapybara
+
+scrapybara = Scrapybara()
 
 def main(instance_type: str = "small"):
     """
