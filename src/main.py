@@ -1,7 +1,11 @@
 import typer
 from scrapybara import Scrapybara
+from dotenv import load_dotenv
+import os
 
-scrapybara = Scrapybara()
+load_dotenv()
+
+scrapybara = Scrapybara(api_key=os.getenv("SCRAPYBARA_API_KEY"))
 
 def main(instance_type: str = "small"):
     """
