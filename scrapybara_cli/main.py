@@ -39,9 +39,6 @@ async def main(instance_type: str = "small"):
             prompt = input("> ")
             await run_agent(instance, tools, prompt)
 
-    except KeyboardInterrupt:
-        pass
-
     except Exception as e:
         print(f"[bold red]{e}[/bold red]")
 

@@ -10,7 +10,7 @@ async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> N
 
     messages = []
     messages.append({"role": "user", "content": [{"type": "text", "text": prompt}]})
-
+    
     while True:
         # Get Claude's response
         response = anthropic.beta.messages.create(
