@@ -2,6 +2,7 @@ from anthropic.types.beta import BetaToolResultBlockParam
 from scrapybara.anthropic.base import ToolResult
 from typing import Optional
 
+
 class ToolCollection:
     def __init__(self, *tools):
         self.tools = tools
@@ -19,6 +20,7 @@ class ToolCollection:
         except Exception as e:
             print(f"Error running tool {name}: {e}")
             return None
+
 
 def make_tool_result(result: ToolResult, tool_use_id: str) -> BetaToolResultBlockParam:
     tool_result_content = []
