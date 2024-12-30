@@ -28,14 +28,30 @@ async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> N
             if content.type == "text":
                 print(content.text)
             elif content.type == "tool_use":
-                print(
-                    f"[bold blue]Running {content.name} with {content.input}[/bold blue]"
-                )
+                text = f"[bold blue]Running {content.name} with {content.input}[/bold blue]"
+
+                if content.name == "computer":
+                    if content.input["action"] == "screenshot":  # type: ignore
+                        text = f"[bold blue]Taking screenshot[/bold blue]"
+                    elif content.input["action"] == "left_click" or content.input["action"] == "right_click":  # type: ignore
+                        text = f"[bold blue]Clicking[/bold blue]"
+                    elif content.input["action"] == "type":  # type: ignore
+                        text = f"[bold blue]Typing[/bold blue]"
+                    elif content.input["action"] == "scroll":  # type: ignore
+                        text = f"[bold blue]Scrolling[/bold blue]"
+                    elif content.input["action"] == "key":  # type: ignore
+                        text = f"[bold blue]Pressing key {content.input['text']}[/bold blue]"  # type: ignore
+                    elif content.input["action"] == "mouse_move":  # type: ignore
+                        text = f"[bold blue]Moving mouse[/bold blue]"
+
+                if content.name == "bash":
+                    text = f"[bold blue]$ {content.input['command']}[/bold blue]"  # type: ignore
+
+                print(text)
 
                 result = await tools.run(
                     name=content.name, tool_input=content.input  # type: ignore
                 )
-
 
                 tool_result = make_tool_result(result, content.id)
                 tool_results.append(tool_result)
