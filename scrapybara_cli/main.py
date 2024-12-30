@@ -1,9 +1,12 @@
 import typer
+import asyncio
 from scrapybara import Scrapybara
 from dotenv import load_dotenv
 from rich.console import Console
 from rich import print
 import os
+from scrapybara_cli.helpers import ToolCollection
+from scrapybara.anthropic import ComputerTool, BashTool, EditTool
 
 load_dotenv()
 
@@ -11,13 +14,7 @@ console = Console()
 scrapybara = Scrapybara(api_key=os.getenv("SCRAPYBARA_API_KEY"))
 
 
-def main(instance_type: str = "small"):
-    """
-    Run the CLI-based computer agent, powered by Scrapybara and Anthropic!
-
-    Args:
-        instance_type: Size of the instance. Must be one of: "small", "medium", "large"
-    """
+async def main(instance_type: str = "small"):
     if instance_type not in ["small", "medium", "large"]:
         raise ValueError('instance_type must be one of: "small", "medium", "large"')
 
@@ -33,10 +30,7 @@ def main(instance_type: str = "small"):
 
         while True:
             prompt = input("> ")
-            if prompt == "exit":
-                break
-            else:
-                print(f"[bold blue]Prompt: {prompt}[/bold blue]")
+            
 
     except KeyboardInterrupt:
         pass
@@ -49,5 +43,15 @@ def main(instance_type: str = "small"):
             status.update("[bold red]Instance stopped![/bold red]")
 
 
+def sync_main(instance_type: str = "small"):
+    """
+    Run the CLI-based computer agent, powered by Scrapybara and Anthropic!
+
+    Args:
+        instance_type: Size of the instance. Must be one of: "small", "medium", "large"
+    """
+    asyncio.run(main(instance_type))
+
+
 if __name__ == "__main__":
-    typer.run(main)
+    typer.run(sync_main)

@@ -1,6 +1,5 @@
 from anthropic.types.beta import BetaToolResultBlockParam
 from scrapybara.anthropic.base import ToolResult
-from typing import Optional
 
 
 class ToolCollection:
