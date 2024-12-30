@@ -24,3 +24,13 @@ scrapybara-cli = "scrapybara_cli.main:app"
 
 [tool.hatch.build.targets.wheel]
 packages = ["scrapybara_cli"]
+
+[build-system.sdist]
+include = [
+    "/scrapybara_cli",
+    "README.md",
+    "LICENSE",
+]
+
+[build-system.wheel]
+packages = ["scrapybara_cli"]
