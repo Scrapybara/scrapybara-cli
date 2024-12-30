@@ -28,8 +28,13 @@ pip install -e .
 
 ## Usage
 
-1. Set up your environment variables (copy .env.example to .env and fill in your API keys)
+1. Set up your environment variables
 2. Run the CLI:
+
+```bash
+export ANTHROPIC_API_KEY=your_anthropic_api_key
+export SCRAPYBARA_API_KEY=your_scrapybara_api_key
+```
 
 ```bash
 scrapybara-cli --instance-type small
