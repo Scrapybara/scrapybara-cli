@@ -11,15 +11,15 @@ class ToolCollection:
     def to_params(self) -> list:
         return [tool.to_params() for tool in self.tools]
 
-    async def run(self, *, name: str, tool_input: dict) -> Optional[ToolResult]:
+    async def run(self, *, name: str, tool_input: dict) -> ToolResult:
         tool = self.tool_map.get(name)
         if not tool:
-            return None
+            raise ValueError("ToolCollection error, no tool found in collection!")
         try:
             return await tool(**tool_input)
         except Exception as e:
             print(f"Error running tool {name}: {e}")
-            return None
+            raise e
 
 
 def make_tool_result(result: ToolResult, tool_use_id: str) -> BetaToolResultBlockParam:
