@@ -3,9 +3,6 @@ from helpers import ToolCollection, make_tool_result
 from scrapybara.client import Instance
 from anthropic import Anthropic
 from rich import print
-from rich.live import Live
-from rich.text import Text
-from rich.panel import Panel
 
 
 async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> None:
@@ -26,45 +23,27 @@ async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> N
         )
 
         # Process tool usage
-        # Process tool usage
         tool_results = []
         for content in response.content:
             if content.type == "text":
                 print(content.text)
             elif content.type == "tool_use":
-                with Live(auto_refresh=False) as live:
-                    live.update(
-                        Panel(
-                            Text.from_markup(
-                                f"[bold blue]Running {content.name} with {content.input}[/bold blue]"
-                            )
-                        )
-                    )
+                print(
+                    f"[bold blue]Running {content.name} with {content.input}[/bold blue]"
+                )
 
-                    result = await tools.run(
-                        name=content.name, tool_input=content.input  # type: ignore
-                    )
+                result = await tools.run(
+                    name=content.name, tool_input=content.input  # type: ignore
+                )
 
-                    if result:
-                        tool_result = make_tool_result(result, content.id)
-                        tool_results.append(tool_result)
 
-                        if result.output:
-                            live.update(
-                                Panel(
-                                    Text.from_markup(
-                                        f"[bold green]{result.output}[/bold green]"
-                                    )
-                                )
-                            )
-                        if result.error:
-                            live.update(
-                                Panel(
-                                    Text.from_markup(
-                                        f"[bold red]{result.error}[/bold red]"
-                                    )
-                                )
-                            )
+                tool_result = make_tool_result(result, content.id)
+                tool_results.append(tool_result)
+
+                if result.output:
+                    print(f"[bold green]{result.output}[/bold green]")
+                if result.error:
+                    print(f"[bold red]{result.error}[/bold red]")
 
         # Add assistant's response and tool results to messages
         messages.append(
