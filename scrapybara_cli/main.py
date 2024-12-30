@@ -60,7 +60,9 @@ async def async_main(instance_type: str, scrapybara: Scrapybara):
             status.update("[bold green]Instance started![/bold green]")
 
         stream_url = instance.get_stream_url().stream_url
-        print(f"[bold blue]Stream URL: {stream_url}[/bold blue]")
+        print(
+            f"[bold blue]Stream URL: {stream_url}/?resize=scale&autoconnect=1[/bold blue]"
+        )
 
         tools = ToolCollection(
             ComputerTool(instance),
