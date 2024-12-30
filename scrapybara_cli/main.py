@@ -30,7 +30,6 @@ async def main(instance_type: str = "small"):
 
         while True:
             prompt = input("> ")
-            
 
     except KeyboardInterrupt:
         pass
