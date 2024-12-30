@@ -1,4 +1,4 @@
-# Bara
+# Scrapybara CLI
 
 > Wake up, Bara... Follow the Capybara hole...
 
