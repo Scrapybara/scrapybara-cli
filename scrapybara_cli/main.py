@@ -5,9 +5,9 @@ from dotenv import load_dotenv
 from rich.console import Console
 from rich import print
 import os
-from scrapybara_cli.helpers import ToolCollection
+from helpers import ToolCollection
 from scrapybara.anthropic import ComputerTool, BashTool, EditTool
-from scrapybara_cli.agent import run_agent
+from agent import run_agent
 
 load_dotenv()
 
@@ -38,9 +38,12 @@ async def main(instance_type: str = "small"):
         while True:
             prompt = input("> ")
             await run_agent(instance, tools, prompt)
-            
+
     except KeyboardInterrupt:
         pass
+
+    except Exception as e:
+        print(f"[bold red]{e}[/bold red]")
 
     finally:
         with console.status(

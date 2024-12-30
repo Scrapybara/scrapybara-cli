@@ -1,5 +1,5 @@
-from scrapybara_cli.prompt import SYSTEM_PROMPT
-from scrapybara_cli.helpers import ToolCollection, make_tool_result
+from prompt import SYSTEM_PROMPT
+from helpers import ToolCollection, make_tool_result
 from scrapybara.client import Instance
 from anthropic import Anthropic
 from rich import print
@@ -45,11 +45,6 @@ async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> N
                         name=content.name, tool_input=content.input  # type: ignore
                     )
 
-                    if content.name == "bash" and not result:
-                        result = await tools.run(
-                            name="computer", tool_input={"action": "screenshot"}
-                        )
-
                     if result:
                         tool_result = make_tool_result(result, content.id)
                         tool_results.append(tool_result)
@@ -58,7 +53,7 @@ async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> N
                             live.update(
                                 Panel(
                                     Text.from_markup(
-                                        f"[bold green]Tool Output: {result.output}[/bold green]"
+                                        f"[bold green]{result.output}[/bold green]"
                                     )
                                 )
                             )
@@ -66,7 +61,7 @@ async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> N
                             live.update(
                                 Panel(
                                     Text.from_markup(
-                                        f"[bold red]Tool Error: {result.error}[/bold red]"
+                                        f"[bold red]{result.error}[/bold red]"
                                     )
                                 )
                             )
