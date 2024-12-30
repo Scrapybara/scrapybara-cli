@@ -28,26 +28,26 @@ async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> N
             if content.type == "text":
                 print(content.text)
             elif content.type == "tool_use":
-                text = f"[bold blue]Running {content.name} with {content.input}[/bold blue]"
+                text = f"Running {content.name} with {content.input}"
 
                 if content.name == "computer":
                     if content.input["action"] == "screenshot":  # type: ignore
-                        text = f"[bold blue]Taking screenshot[/bold blue]"
+                        text = "Taking screenshot"
                     elif content.input["action"] == "left_click" or content.input["action"] == "right_click":  # type: ignore
-                        text = f"[bold blue]Clicking[/bold blue]"
+                        text = "Clicking"
                     elif content.input["action"] == "type":  # type: ignore
-                        text = f"[bold blue]Typing[/bold blue]"
+                        text = "Typing"
                     elif content.input["action"] == "scroll":  # type: ignore
-                        text = f"[bold blue]Scrolling[/bold blue]"
+                        text = "Scrolling"
                     elif content.input["action"] == "key":  # type: ignore
-                        text = f"[bold blue]Pressing key {content.input['text']}[/bold blue]"  # type: ignore
+                        text = f"Pressing key {content.input['text']}"  # type: ignore
                     elif content.input["action"] == "mouse_move":  # type: ignore
-                        text = f"[bold blue]Moving mouse[/bold blue]"
+                        text = "Moving mouse"
 
                 if content.name == "bash":
-                    text = f"[bold blue]$ {content.input['command']}[/bold blue]"  # type: ignore
+                    text = f"$ {content.input['command']}"  # type: ignore
 
-                print(text)
+                print(f"[bold blue]{text}[/bold blue]")
 
                 result = await tools.run(
                     name=content.name, tool_input=content.input  # type: ignore
