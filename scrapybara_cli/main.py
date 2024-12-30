@@ -7,6 +7,7 @@ from rich import print
 import os
 from scrapybara_cli.helpers import ToolCollection
 from scrapybara.anthropic import ComputerTool, BashTool, EditTool
+from scrapybara_cli.agent import run_agent
 
 load_dotenv()
 
@@ -28,9 +29,16 @@ async def main(instance_type: str = "small"):
         stream_url = instance.get_stream_url().stream_url
         print(f"[bold blue]Stream URL: {stream_url}[/bold blue]")
 
+        tools = ToolCollection(
+            ComputerTool(instance),
+            BashTool(instance),
+            EditTool(instance),
+        )
+
         while True:
             prompt = input("> ")
-
+            await run_agent(instance, tools, prompt)
+            
     except KeyboardInterrupt:
         pass
 
