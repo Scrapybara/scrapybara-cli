@@ -5,20 +5,53 @@ from dotenv import load_dotenv
 from rich.console import Console
 from rich import print
 import os
-from helpers import ToolCollection
+from .helpers import ToolCollection
 from scrapybara.anthropic import ComputerTool, BashTool, EditTool
-from agent import run_agent
+from .agent import run_agent
 
 load_dotenv()
 
 console = Console()
-scrapybara = Scrapybara(api_key=os.getenv("SCRAPYBARA_API_KEY"))
+app = typer.Typer()
 
 
-async def main(instance_type: str = "small"):
+@app.command()
+def main(
+    instance_type: str = typer.Option(
+        "small", help="Size of the instance. Must be one of: 'small', 'medium', 'large'"
+    )
+):
+    """
+    Run the CLI-based computer agent, powered by Scrapybara and Anthropic!
+    """
+    # Check for required environment variables
+    scrapybara_key = os.getenv("SCRAPYBARA_API_KEY")
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY")
+
+    if not scrapybara_key:
+        raise typer.BadParameter(
+            "SCRAPYBARA_API_KEY environment variable is not set. "
+            "Please set it either in .env file or export SCRAPYBARA_API_KEY=your_key"
+        )
+
+    if not anthropic_key:
+        raise typer.BadParameter(
+            "ANTHROPIC_API_KEY environment variable is not set. "
+            "Please set it either in .env file or export ANTHROPIC_API_KEY=your_key"
+        )
+
     if instance_type not in ["small", "medium", "large"]:
-        raise ValueError('instance_type must be one of: "small", "medium", "large"')
+        raise typer.BadParameter(
+            'instance_type must be one of: "small", "medium", "large"'
+        )
 
+    # Initialize Scrapybara with the API key
+    scrapybara = Scrapybara(api_key=scrapybara_key)
+
+    asyncio.run(async_main(instance_type, scrapybara))
+
+
+async def async_main(instance_type: str, scrapybara: Scrapybara):
     try:
         with console.status(
             "[bold green]Starting instance...[/bold green]", spinner="dots"
@@ -50,15 +83,5 @@ async def main(instance_type: str = "small"):
             status.update("[bold red]Instance stopped![/bold red]")
 
 
-def sync_main(instance_type: str = "small"):
-    """
-    Run the CLI-based computer agent, powered by Scrapybara and Anthropic!
-
-    Args:
-        instance_type: Size of the instance. Must be one of: "small", "medium", "large"
-    """
-    asyncio.run(main(instance_type))
-
-
 if __name__ == "__main__":
-    typer.run(sync_main)
+    app()
