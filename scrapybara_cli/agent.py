@@ -8,6 +8,8 @@ from rich import print
 async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> None:
     anthropic = Anthropic()
 
+    stream_url = instance.get_stream_url().stream_url
+
     messages = []
     messages.append({"role": "user", "content": [{"type": "text", "text": prompt}]})
 
@@ -45,7 +47,7 @@ async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> N
                         text = "[bold yellow]Moving mouse[/bold yellow]"
 
                 if content.name == "bash":
-                    text = f"[green]scrapybara[/green]@[red]instance[/red]# {content.input['command']}"  # type: ignore
+                    text = f"[green]scrapybara[/green]@[white]{stream_url}[/white]# {content.input['command']}"  # type: ignore
 
                 print(f"{text}")
 
