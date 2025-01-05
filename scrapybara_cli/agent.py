@@ -28,7 +28,7 @@ async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> N
         tool_results = []
         for content in response.content:
             if content.type == "text":
-                print(content.text)
+                print(f"\n{content.text}")
             elif content.type == "tool_use":
                 text = f"Running {content.name} with {content.input}"
 

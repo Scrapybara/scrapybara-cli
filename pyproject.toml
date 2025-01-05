@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "scrapybara-cli"
-version = "0.1.5"
+version = "0.1.6"
 description = "CLI tool for controlling virtual machines with Claude"
 readme = "README.md"
 requires-python = ">=3.8"
