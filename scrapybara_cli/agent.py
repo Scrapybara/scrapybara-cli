@@ -32,22 +32,22 @@ async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> N
 
                 if content.name == "computer":
                     if content.input["action"] == "screenshot":  # type: ignore
-                        text = "Taking screenshot"
+                        text = "[bold yellow]Taking screenshot[/bold yellow]"
                     elif content.input["action"] == "left_click" or content.input["action"] == "right_click":  # type: ignore
-                        text = "Clicking"
+                        text = "[bold yellow]Clicking[/bold yellow]"
                     elif content.input["action"] == "type":  # type: ignore
-                        text = "Typing"
+                        text = "[bold yellow]Typing[/bold yellow]"
                     elif content.input["action"] == "scroll":  # type: ignore
-                        text = "Scrolling"
+                        text = "[bold yellow]Scrolling[/bold yellow]"
                     elif content.input["action"] == "key":  # type: ignore
-                        text = f"Pressing key {content.input['text']}"  # type: ignore
+                        text = f"[bold yellow]Pressing key '{content.input['text'].upper()}'[/bold yellow]"  # type: ignore
                     elif content.input["action"] == "mouse_move":  # type: ignore
-                        text = "Moving mouse"
+                        text = "[bold yellow]Moving mouse[/bold yellow]"
 
                 if content.name == "bash":
-                    text = f"$ {content.input['command']}"  # type: ignore
+                    text = f"[green]scrapybara[/green]@[red]instance[/red]# {content.input['command']}"  # type: ignore
 
-                print(f"[bold blue]{text}[/bold blue]")
+                print(f"{text}")
 
                 result = await tools.run(
                     name=content.name, tool_input=content.input  # type: ignore
@@ -57,9 +57,9 @@ async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> N
                 tool_results.append(tool_result)
 
                 if result.output:
-                    print(f"[bold green]{result.output}[/bold green]")
+                    print(f"[green]{result.output}[/green]")
                 if result.error:
-                    print(f"[bold red]{result.error}[/bold red]")
+                    print(f"[red]{result.error}[/red]")
 
         # Add assistant's response and tool results to messages
         messages.append(
