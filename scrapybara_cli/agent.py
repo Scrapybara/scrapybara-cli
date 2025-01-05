@@ -47,7 +47,7 @@ async def run_agent(instance: Instance, tools: ToolCollection, prompt: str) -> N
                         text = "[bold yellow]Moving mouse[/bold yellow]"
 
                 if content.name == "bash":
-                    text = f"[green]scrapybara[/green]@[white]{stream_url}[/white]# {content.input['command']}"  # type: ignore
+                    text = f"[green]scrapybara[/green]@[white]{stream_url.replace('http://', '').split(':')[0]}[/white]# {content.input['command']}"  # type: ignore
 
                 print(f"{text}")
 
