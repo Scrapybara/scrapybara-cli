@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from rich.console import Console
 from rich import print
 import os
+from getpass import getpass
 from .helpers import ToolCollection
 from scrapybara.anthropic import ComputerTool, BashTool, EditTool
 from .agent import run_agent
@@ -29,16 +30,16 @@ def main(
     anthropic_key = os.getenv("ANTHROPIC_API_KEY")
 
     if not scrapybara_key:
-        raise typer.BadParameter(
-            "SCRAPYBARA_API_KEY environment variable is not set. "
-            "Please set it either in .env file or export SCRAPYBARA_API_KEY=your_key"
-        )
+        scrapybara_key = getpass("Please enter your Scrapybara API key: ").strip()
+        os.environ["SCRAPYBARA_API_KEY"] = scrapybara_key
+        if not scrapybara_key:
+            raise typer.BadParameter("Scrapybara API key is required to continue.")
 
     if not anthropic_key:
-        raise typer.BadParameter(
-            "ANTHROPIC_API_KEY environment variable is not set. "
-            "Please set it either in .env file or export ANTHROPIC_API_KEY=your_key"
-        )
+        anthropic_key = getpass("Please enter your Anthropic API key: ").strip()
+        os.environ["ANTHROPIC_API_KEY"] = anthropic_key
+        if not anthropic_key:
+            raise typer.BadParameter("Anthropic API key is required to continue.")
 
     if instance_type not in ["small", "medium", "large"]:
         raise typer.BadParameter(
