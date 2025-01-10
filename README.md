@@ -1,4 +1,5 @@
 # Scrapybara CLI
+Scrapybara Bounty Force Winner Project by @keell0renz (Bohdan Agarkov)
 
 > Wake up, Bara... Follow the Capybara hole...
 
