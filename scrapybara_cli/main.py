@@ -1,14 +1,14 @@
-import typer
-import asyncio
+from scrapybara.tools import ComputerTool, BashTool, EditTool
+from scrapybara.prompts import SYSTEM_PROMPT
+from scrapybara.anthropic import Anthropic
 from scrapybara import Scrapybara
 from dotenv import load_dotenv
 from rich.console import Console
 from rich import print
+from .callback import print_step
+from .helpers import check_required_keys
+import typer
 import os
-from getpass import getpass
-from .helpers import ToolCollection
-from scrapybara.anthropic import ComputerTool, BashTool, EditTool
-from .agent import run_agent
 
 load_dotenv()
 
@@ -25,39 +25,20 @@ def main(
     """
     Run the CLI-based computer agent, powered by Scrapybara and Anthropic!
     """
-    # Check for required environment variables
-    scrapybara_key = os.getenv("SCRAPYBARA_API_KEY")
-    anthropic_key = os.getenv("ANTHROPIC_API_KEY")
-
-    if not scrapybara_key:
-        scrapybara_key = getpass("Please enter your Scrapybara API key: ").strip()
-        os.environ["SCRAPYBARA_API_KEY"] = scrapybara_key
-        if not scrapybara_key:
-            raise typer.BadParameter("Scrapybara API key is required to continue.")
-
-    if not anthropic_key:
-        anthropic_key = getpass("Please enter your Anthropic API key: ").strip()
-        os.environ["ANTHROPIC_API_KEY"] = anthropic_key
-        if not anthropic_key:
-            raise typer.BadParameter("Anthropic API key is required to continue.")
-
     if instance_type not in ["small", "medium", "large"]:
         raise typer.BadParameter(
             'instance_type must be one of: "small", "medium", "large"'
         )
 
-    # Initialize Scrapybara with the API key
-    scrapybara = Scrapybara(api_key=scrapybara_key)
+    check_required_keys()
 
-    asyncio.run(async_main(instance_type, scrapybara))
+    client = Scrapybara(api_key=os.getenv("SCRAPYBARA_API_KEY"))
 
-
-async def async_main(instance_type: str, scrapybara: Scrapybara):
     try:
         with console.status(
             "[bold green]Starting instance...[/bold green]", spinner="dots"
         ) as status:
-            instance = scrapybara.start(instance_type=instance_type)
+            instance = client.start(instance_type=instance_type)
             status.update("[bold green]Instance started![/bold green]")
 
         stream_url = instance.get_stream_url().stream_url
@@ -65,15 +46,24 @@ async def async_main(instance_type: str, scrapybara: Scrapybara):
             f"[bold blue]Stream URL: {stream_url}/?resize=scale&autoconnect=1[/bold blue]"
         )
 
-        tools = ToolCollection(
-            ComputerTool(instance),
-            BashTool(instance),
-            EditTool(instance),
-        )
-
         while True:
             prompt = input("> ")
-            await run_agent(instance, tools, prompt)
+
+            try:
+                client.act(
+                    model=Anthropic(),
+                    tools=[
+                    ComputerTool(instance),
+                    BashTool(instance),
+                    EditTool(instance),
+                ],
+                system=SYSTEM_PROMPT,
+                prompt=prompt,
+                on_step=print_step,
+            )
+
+            except UnboundLocalError as e:
+                pass  # Make this shit shut up until Justin fixes
 
     except Exception as e:
         print(f"[bold red]{e}[/bold red]")

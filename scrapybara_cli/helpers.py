@@ -1,56 +1,18 @@
-from anthropic.types.beta import BetaToolResultBlockParam
-from scrapybara.anthropic.base import ToolResult
+from getpass import getpass
+import os
+import typer
 
 
-class ToolCollection:
-    def __init__(self, *tools):
-        self.tools = tools
-        self.tool_map = {tool.to_params()["name"]: tool for tool in tools}
+def check_required_keys():
+    """Check and prompt for required API keys if not present in environment"""
+    if not os.getenv("SCRAPYBARA_API_KEY"):
+        scrapybara_key = getpass("Please enter your Scrapybara API key: ").strip()
+        if not scrapybara_key:
+            raise typer.BadParameter("Scrapybara API key is required to continue.")
+        os.environ["SCRAPYBARA_API_KEY"] = scrapybara_key
 
-    def to_params(self) -> list:
-        return [tool.to_params() for tool in self.tools]
-
-    async def run(self, *, name: str, tool_input: dict) -> ToolResult:
-        tool = self.tool_map.get(name)
-        if not tool:
-            raise ValueError("ToolCollection error, no tool found in collection!")
-        try:
-            return await tool(**tool_input)
-        except Exception as e:
-            print(f"Error running tool {name}: {e}")
-            raise e
-
-
-def make_tool_result(result: ToolResult, tool_use_id: str) -> BetaToolResultBlockParam:
-    tool_result_content = []
-    is_error = False
-
-    if result.error:
-        is_error = True
-        tool_result_content = result.error
-    else:
-        if result.output:
-            tool_result_content.append(
-                {
-                    "type": "text",
-                    "text": result.output,
-                }
-            )
-        if result.base64_image:
-            tool_result_content.append(
-                {
-                    "type": "image",
-                    "source": {
-                        "type": "base64",
-                        "media_type": "image/png",
-                        "data": result.base64_image,
-                    },
-                }
-            )
-
-    return {
-        "type": "tool_result",
-        "content": tool_result_content,
-        "tool_use_id": tool_use_id,
-        "is_error": is_error,
-    }
+    if not os.getenv("ANTHROPIC_API_KEY"):
+        anthropic_key = getpass("Please enter your Anthropic API key: ").strip()
+        if not anthropic_key:
+            raise typer.BadParameter("Anthropic API key is required to continue.")
+        os.environ["ANTHROPIC_API_KEY"] = anthropic_key
