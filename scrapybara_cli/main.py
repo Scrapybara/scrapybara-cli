@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from rich.console import Console
 from rich import print
 from .callback import print_step
-from .helpers import check_required_keys
+from getpass import getpass
 import typer
 import os
 
@@ -30,7 +30,17 @@ def main(
             'instance_type must be one of: "small", "medium", "large"'
         )
 
-    check_required_keys()
+    if not os.getenv("SCRAPYBARA_API_KEY"):
+        scrapybara_key = getpass("Please enter your Scrapybara API key: ").strip()
+        if not scrapybara_key:
+            raise typer.BadParameter("Scrapybara API key is required to continue.")
+        os.environ["SCRAPYBARA_API_KEY"] = scrapybara_key
+
+    if not os.getenv("ANTHROPIC_API_KEY"):
+        anthropic_key = getpass("Please enter your Anthropic API key: ").strip()
+        if not anthropic_key:
+            raise typer.BadParameter("Anthropic API key is required to continue.")
+        os.environ["ANTHROPIC_API_KEY"] = anthropic_key
 
     client = Scrapybara(api_key=os.getenv("SCRAPYBARA_API_KEY"))
 
