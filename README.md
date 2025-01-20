@@ -62,9 +62,3 @@ gained significant media attention and became a viral sensation.
 
 The phrase continues to be used in internet culture, memes, and casual conversation as a playful joke or response, often catching people off guard with its unexpected delivery.
 ```
-
-Available instance types:
-
-- small
-- medium
-- large
