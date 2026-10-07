@@ -19,7 +19,7 @@ app = typer.Typer()
 @app.command()
 def main(
     instance_type: str = typer.Option(
-        "small", help="Size of the instance. Must be one of: 'small', 'medium', 'large'"
+        "medium", help="Size of the instance. Must be one of: 'small', 'medium', 'large'"
     )
 ):
     """
